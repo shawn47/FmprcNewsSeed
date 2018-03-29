@@ -1,1 +1,7 @@
-north+korea+china
+north+korea+china KD CN
+United+States+china UK CN
+Russian+Federation+china RU CN
+United+Kingdom+china UK CN
+Iran+china IR CN
+Japan+china JP CN
+India+china IN CN
