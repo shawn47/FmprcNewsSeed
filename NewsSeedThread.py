@@ -2,10 +2,12 @@
 
 from queue import Queue
 import sys
+import os
 import threading
 import time
 
 from fmprcNewsSeed import extractNewsByCountry
+from config import ROOT_FILE
 
 class NewsSeedThread (threading.Thread):
 	def __init__(self, threadID, keyWord, q):
@@ -36,8 +38,9 @@ workQueue = Queue(10)
 threads = []
 threadID = 1
 
-if __name__ == '__main__':
+def fetchNews():
 	for tName in threadList:
+		global threadID
 		thread = NewsSeedThread(threadID, tName, workQueue)
 		thread.start()
 		threads.append(thread)
@@ -45,7 +48,8 @@ if __name__ == '__main__':
 
 	queueLock.acquire()
 
-	with open('/Users/xiaoyongbo/Documents/projects/FmprcNewsSeed/key_word.txt','r') as kf:
+	key_word_file = os.path.join(os.path.join(ROOT_FILE, 'data'), 'key_word.txt')
+	with open(key_word_file, 'r') as kf:
 		for word in kf:
 			workQueue.put(word)
 

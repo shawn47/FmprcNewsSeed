@@ -1,18 +1,19 @@
 #coding=utf-8
+
 from urllib.request import urlopen
 from urllib.parse import quote
 from bs4 import BeautifulSoup
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 import string
-import random
+import os
 import re
 import urllib
 import hashlib
 import time
 
 from user_agents import user_agents
-from utils import extractMediaExpireDate
+from config import URL_NEXT
+from utils import extractMediaExpireDate, getRandomDomain, getRandomUserAgent
 from db import CrawlerDB
 
 def extractNewsByCountry(keyWord):
@@ -21,14 +22,20 @@ def extractNewsByCountry(keyWord):
 	countryA = None if len(keyWordArr) < 2 else keyWordArr[1]
 	countryB = None if len(keyWordArr) < 3 else keyWordArr[2]
 
-	url = 'https://www.google.com.hk/search?q=' + searchWord.strip() + '&source=lnms&tbm=nws&num=20&as_qdr=n10'
+	domain = getRandomDomain()
+	# url = 'https://www.google.com.hk/search?q=' + searchWord.strip() + '&source=lnms&tbm=nws&num=20&as_qdr=n10'
+	url = URL_NEXT
+	url = url.format(domain = domain, query = searchWord.strip(), num = 5, qdr = 'n10')
+
 	request = quote(url, safe = string.printable)
 	print(request)
 
-	index = random.randint(0, 9)
-	user_agent = user_agents[index]
+	user_agent = getRandomUserAgent()
 
-	headers = {'User-Agent': user_agent}
+	headers = {
+		'User-Agent': user_agent,
+		'cookie': 'NID=126=rHiwWGEfr2VVtMOVvfLbZUa1FnGmWEo01MZlNN9DGJjGzdLfF342sf9gwVk8sGqQJUVWB8pp7d2Cpih9DUinHM17ITBtnmxGFVpC0Zz-8D0jCWnjIUSgLYCrBUP1bQVg9pHLyFQ; DV=c1EnZfFkERoSYKEIkm8vVLY3NacHJxY; 1P_JAR=2018-3-29-6'
+		}
 	req = urllib.request.Request(url = request, headers = headers)
 	response = urllib.request.urlopen(req)
 
